@@ -1,21 +1,25 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { getTopRatedMovies } from "@/services/movies/getTopRatedMovies";
 import Link from "next/link";
 import MovieCard from "@/components/MovieCard/MovieCard";
+import Pagination from "@/components/Pagination";
 
 const TopRatedClientPage = () => {
   const [loading, setLoading] = useState(false);
   const [movies, setMovies] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
     const fetchPopularMovies = async () => {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 2000)); // simulate 2s delay
       try {
-        const data = await getTopRatedMovies();
+        const data = await getTopRatedMovies(currentPage);
         setMovies(data.results);
+        setTotalPages(Math.min(data.total_pages, 20));
       } catch (err) {
         console.error("Error loading movies: ", err);
       }
@@ -23,7 +27,7 @@ const TopRatedClientPage = () => {
     };
 
     fetchPopularMovies();
-  }, []);
+  }, [currentPage]);
 
   return (
     <div>
@@ -39,11 +43,22 @@ const TopRatedClientPage = () => {
               pathname: `/movie/${movie.id}`,
               query: { from: "popular" },
             }}
-            >
-              <MovieCard title={movie.title} voteAverage={movie.vote_average} posterPath={movie.poster_path} releaseYear={new Date(movie.release_date).getFullYear()} description={movie.overview} />
+          >
+            <MovieCard
+              title={movie.title}
+              voteAverage={movie.vote_average}
+              posterPath={movie.poster_path}
+              releaseYear={new Date(movie.release_date).getFullYear()}
+              description={movie.overview}
+            />
           </Link>
         ))}
       </div>
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };
