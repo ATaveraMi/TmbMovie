@@ -5,17 +5,17 @@ import { getNowPlayingMovies } from "@/services/movies/getNowPlayingMovies";
 import Link from "next/link";
 import MovieCard from "@/components/MovieCard/MovieCard";
 import Pagination from "@/components/Pagination";
+import { IMovieDetail } from "@/types/IMovieDetail";
 
 const NowPlayingClientPage = () => {
   const [loading, setLoading] = useState(false);
-  const [movies, setMovies] = useState<any[]>([]);
+  const [movies, setMovies] = useState<IMovieDetail[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
 
   useEffect(() => {
-    const fetchPopularMovies = async () => {
+    const fetchNowPlayingMovies = async () => {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // simulate 2s delay
       try {
         const data = await getNowPlayingMovies(currentPage);
         setMovies(data.results);
@@ -26,34 +26,48 @@ const NowPlayingClientPage = () => {
       setLoading(false);
     };
 
-    fetchPopularMovies();
+    fetchNowPlayingMovies();
   }, [currentPage]);
 
   return (
     <div>
       <h3 className="text-3xl font-bold mb-6">Now Playing Movies</h3>
       {/* Loading indicator */}
-      {loading && <h5 className="text-lg text-gray-500">Cargando...</h5>}
+      {loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <div key={index} className="rounded-xl shadow-lg animate-pulse">
+              <div className="w-full h-96 bg-gray-300 rounded-t-xl"></div>
+              <div className="p-4">
+                <div className="h-6 bg-gray-300 rounded mb-2"></div>
+                <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       {/* Grid Layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {movies?.map((movie) => (
-          <Link
-            key={movie.id}
-            href={{
-              pathname: `/movie/${movie.id}`,
-              query: { from: "now-playing" },
-            }}
-          >
-            <MovieCard
-              title={movie.title}
-              voteAverage={movie.vote_average}
-              posterPath={movie.poster_path}
-              releaseYear={new Date(movie.release_date).getFullYear()}
-              description={movie.overview}
-            />
-          </Link>
-        ))}
-      </div>
+      {!loading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {movies?.map((movie) => (
+            <Link
+              key={movie.id}
+              href={{
+                pathname: `/movie/${movie.id}`,
+                query: { from: "now-playing" },
+              }}
+            >
+              <MovieCard
+                title={movie.title}
+                voteAverage={movie.vote_average}
+                posterPath={movie.poster_path}
+                releaseYear={new Date(movie.release_date).getFullYear()}
+                description={movie.overview}
+              />
+            </Link>
+          ))}
+        </div>
+      )}
       <Pagination
         totalPages={totalPages}
         currentPage={currentPage}
