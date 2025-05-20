@@ -8,6 +8,8 @@ import { getMovieById } from "@/services/movies/getMovieById";
 import { markAsFavorite } from "@/services/accounts/markAsFavorite";
 import { useGuestSession } from "@/providers/guestSessionContext";
 import { useParams } from "next/navigation";
+import getRecommendedMovies from "@/services/movies/getRecommendedMovies";
+import MovieCarousel from "@/components/MovieCarousel";
 
 const MovieDetailPage = () => {
   const { id } = useParams();
@@ -15,6 +17,20 @@ const MovieDetailPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [recommendations, setRecommendations] = useState([]);
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const data = await getRecommendedMovies(id);
+        setRecommendations(data.results);
+      } catch (err) {
+        console.error("Error fetching recommendations", err);
+      }
+    };
+
+    fetchRecommendations();
+  }, [id]);
 
   const { guestSessionId } = useGuestSession();
 
@@ -119,6 +135,7 @@ const MovieDetailPage = () => {
           </button>
         </div>
       </div>
+      <MovieCarousel recommendations={recommendations} />
     </div>
   );
 };

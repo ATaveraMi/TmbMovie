@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const links = [
   { href: "/popular", label: "Popular" },
@@ -15,6 +15,11 @@ const links = [
 const Header = () => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <header className="w-full border-b shadow-sm relative">
@@ -23,7 +28,7 @@ const Header = () => {
           href="/"
           className="text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
         >
-          PelisXD
+          Pelisgroso
         </Link>
 
         {/* Mobile menu button */}
@@ -73,7 +78,7 @@ const Header = () => {
         </nav>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
+        {isMounted && isMenuOpen && (
           <div className="absolute top-full left-0 right-0 bg-white border-b shadow-lg md:hidden z-50">
             <div className="container mx-auto px-4 py-3">
               <nav className="flex flex-col space-y-3">
