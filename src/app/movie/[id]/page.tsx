@@ -22,7 +22,7 @@ const MovieDetailPage = () => {
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const data = await getRecommendedMovies(id);
+        const data = await getRecommendedMovies(Number(id));
         setRecommendations(data.results);
       } catch (err) {
         console.error("Error fetching recommendations", err);

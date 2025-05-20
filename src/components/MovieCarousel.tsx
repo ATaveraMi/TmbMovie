@@ -10,19 +10,14 @@ interface MovieCarouselProps {
 
 const MovieCarousel = ({ recommendations }: MovieCarouselProps) => {
   const responsive = {
-    superLargeDesktop: {
-      breakpoint: { max: 4000, min: 1536 },
-      items: 5,
-      slidesToSlide: 1,
-    },
     desktop: {
-      breakpoint: { max: 1536, min: 1024 },
+      breakpoint: { max: 3000, min: 1024 },
       items: 4,
       slidesToSlide: 1,
     },
     tablet: {
       breakpoint: { max: 1024, min: 640 },
-      items: 3,
+      items: 2,
       slidesToSlide: 1,
     },
     mobile: {
@@ -33,23 +28,27 @@ const MovieCarousel = ({ recommendations }: MovieCarouselProps) => {
   };
 
   return (
-    <div className="px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6">Recommended Movies</h2>
+    <div className="w-full py-8">
+      <h2 className="text-2xl font-bold mb-6 px-4">Recommended Movies</h2>
       <Carousel
         responsive={responsive}
         infinite={true}
         autoPlay={true}
         autoPlaySpeed={3000}
         keyBoardControl={true}
-        customTransition="transform 300ms ease-in-out"
-        transitionDuration={300}
+        customTransition="all .5"
+        transitionDuration={500}
         containerClass="carousel-container"
         removeArrowOnDeviceType={["mobile"]}
         dotListClass="custom-dot-list-style"
-        itemClass="carousel-item-padding-40-px"
+        itemClass="px-2"
+        centerMode={false}
+        swipeable={true}
+        draggable={true}
+        showDots={true}
       >
         {recommendations.map((movie) => (
-          <div key={movie.id} className="px-2">
+          <div key={movie.id}>
             <Link
               href={{
                 pathname: `/movie/${movie.id}`,

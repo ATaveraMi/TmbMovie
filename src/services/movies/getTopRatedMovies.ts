@@ -1,15 +1,15 @@
-import api from "../api"
+import api from "../api";
 
-export const getTopRatedMovies = async () => {
-    let res: any;
-    const endpoint = "/movie/top_rated?language=en-US";
-    await api
-        .get(endpoint)
-        .then((d) =>{
-            res = d.data
-        })
-        .catch((err) =>{
-            res = err.response;
-        });
-    return res;
-}
+export const getTopRatedMovies = async (page: number = 1) => {
+  try {
+    const { data } = await api.get(
+      `/movie/top_rated?language=en-US&page=${page}`
+    );
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+export default getTopRatedMovies;
